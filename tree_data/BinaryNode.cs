@@ -1,6 +1,6 @@
 ﻿namespace Tree.Data
 {
-  public class BinaryNode<T>: ITreeNode<T>
+  public class BinaryNode<T>
   {
     /// <summary>
     /// Left subtree
@@ -17,21 +17,6 @@
     /// Data contained in this node
     /// </summary>
     public T Value { get; private set; }
-
-    /// <summary>
-    /// Iterator over non-null child nodes
-    /// </summary>
-    public IEnumerable<ITreeNode<T>> GetChildren()
-    {
-      if (LeftNode != null)
-      {
-        yield return LeftNode;
-      }
-      if (RightNode != null)
-      {
-        yield return RightNode;
-      }
-    }
 
     /// <summary>
     /// Creates a binary tree node with a given value. Because LeftNode 
@@ -71,7 +56,7 @@
     /// </summary>
     /// <returns>string reprensentation of this subtree</returns>
     public override string ToString() =>
-        $"{Value}: {LeftNode.ValueString()} {RightNode.ValueString()}";
+        $"{Value}: {LeftNode?.Value.ToString() ?? "null"} {RightNode?.Value.ToString() ?? "null"}";
 
   }
 }

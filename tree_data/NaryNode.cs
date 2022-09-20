@@ -10,7 +10,7 @@ namespace Tree.Data
   /// N-ary tree node class
   /// </summary>
   /// <typeparam name="T">type of value data</typeparam>
-  public class NaryNode<T> : ITreeNode<T>
+  public class NaryNode<T> 
   {
     /// <summary>
     /// Value of this node
@@ -41,10 +41,5 @@ namespace Tree.Data
 
     public override string ToString() =>
       $"{Value}: {Children.Select(n => n.Value).JoinToString(" ")}";
-
-    public IEnumerable<ITreeNode<T>> GetChildren()
-    {
-      return Children;
-    }
   }
 }
