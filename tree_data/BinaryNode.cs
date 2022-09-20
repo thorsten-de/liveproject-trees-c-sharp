@@ -54,19 +54,21 @@ namespace Tree.Data
       return this;
     }
 
-    public override string ToString()
-    {
-      return ToString("");
-    }
+    public override string ToString() =>
+      ToString("");
+
+
     /// <summary>
     /// Stringifies this node, actually the whole subtree, recoursively
     /// </summary>
-    /// <returns>string reprensentation of this subtree</returns>
+    /// <returns>string outline of this subtree</returns>
     private string ToString(string spaces)
     {
       string nextLevelSpacing = spaces + "  ";
-      Func<StringBuilder, StringBuilder> outlineChildren;
 
+      // build a function that appends lines to a string builder
+      // that is based on the presence of Left/Right child nodes
+      Func<StringBuilder, StringBuilder> outlineChildren;
       switch ((LeftNode, RightNode))
       {
         case (BinaryNode<T> left, BinaryNode<T> right):
@@ -86,14 +88,13 @@ namespace Tree.Data
           outlineChildren = (StringBuilder sb) =>
             sb.Append(nextLevelSpacing).AppendLine("None")
               .Append(right.ToString(nextLevelSpacing));
-          break;        
+          break;
 
 
         case (null, null):
-          outlineChildren = (StringBuilder sb) => sb ;
+          outlineChildren = (StringBuilder sb) => sb;
           break;
       }
-
 
       return new StringBuilder(spaces)
         .Append(Value)
