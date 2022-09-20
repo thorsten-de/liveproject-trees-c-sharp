@@ -28,4 +28,11 @@
     public static string ValueString<T>(this ITreeNode<T>? node, string nullValue = "null") =>
       node.PropertyOrNullString(n => n.Value, nullValue);
   }
+
+
+  public static class EnumerableExtensions
+  {
+    public static string JoinToString<T>(this IEnumerable<T> enumerable, string seperator = ", ") =>
+      string.Join(seperator, enumerable);
+  }
 }
