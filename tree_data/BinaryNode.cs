@@ -1,4 +1,7 @@
-﻿namespace Tree.Data
+﻿using System.Text;
+using System.Xml.Serialization;
+
+namespace Tree.Data
 {
   public class BinaryNode<T>
   {
@@ -51,12 +54,54 @@
       return this;
     }
 
+    public override string ToString() =>
+      ToString("");
+
+
     /// <summary>
     /// Stringifies this node, actually the whole subtree, recoursively
     /// </summary>
-    /// <returns>string reprensentation of this subtree</returns>
-    public override string ToString() =>
-        $"{Value}: {LeftNode?.Value.ToString() ?? "null"} {RightNode?.Value.ToString() ?? "null"}";
+    /// <returns>string outline of this subtree</returns>
+    private string ToString(string spaces)
+    {
+      string nextLevelSpacing = spaces + "  ";
+
+      // build a function that appends lines to a string builder
+      // that is based on the presence of Left/Right child nodes
+      Func<StringBuilder, StringBuilder> outlineChildren;
+      switch ((LeftNode, RightNode))
+      {
+        case (BinaryNode<T> left, BinaryNode<T> right):
+          outlineChildren = (StringBuilder sb) =>
+            sb.Append(left.ToString(nextLevelSpacing))
+              .Append(right.ToString(nextLevelSpacing));
+          break;
+
+
+        case (BinaryNode<T> left, null):
+          outlineChildren = (StringBuilder sb) =>
+            sb.Append(left.ToString(nextLevelSpacing))
+              .Append(nextLevelSpacing).AppendLine("None");
+          break;
+
+        case (null, BinaryNode<T> right):
+          outlineChildren = (StringBuilder sb) =>
+            sb.Append(nextLevelSpacing).AppendLine("None")
+              .Append(right.ToString(nextLevelSpacing));
+          break;
+
+
+        case (null, null):
+          outlineChildren = (StringBuilder sb) => sb;
+          break;
+      }
+
+      return new StringBuilder(spaces)
+        .Append(Value)
+        .Append(":\n")
+        .Apply(outlineChildren)
+        .ToString();
+    }
 
   }
 }

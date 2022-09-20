@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,19 @@ namespace Tree.Data
     }
 
     public override string ToString() =>
-      $"{Value}: {Children.Select(n => n.Value).JoinToString(" ")}";
+      ToString("");
+
+    /// <summary>
+    /// Builds a string outline recoursively
+    /// </summary>
+    private string ToString(string spaces) =>
+      new StringBuilder(spaces)
+        .Append(Value)
+        .AppendLine(":")
+        .AppendJoin("", Children.Select(n => n.ToString(spaces + "  ")))
+        .ToString();
+
+
+
   }
 }

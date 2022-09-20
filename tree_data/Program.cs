@@ -25,11 +25,8 @@ var test_binary_nodes = () =>
         e.AddLeft(f))
     );
 
-  var nodes = new[] { root, a, b, c, d, e, f };
-  foreach (var node in nodes)
-  {
-    Console.WriteLine(node);
-  }
+  Console.WriteLine(root);
+  Console.WriteLine(a);
 };
 
 // Test N-ary nodes, also wrapped in an Action to scope var names
@@ -63,12 +60,9 @@ var test_nary_nodes = () =>
         .AddChild(i)
       )
     );
-
-  var nodes = new[] { root, a, b, c, d, e, f, g, h, i };
-  foreach (var node in nodes)
-  {
-    Console.WriteLine(node);
-  }
+  
+  Console.WriteLine(root);
+  Console.WriteLine(a);
 };
 
 // Run tests
