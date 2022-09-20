@@ -60,12 +60,9 @@ var test_nary_nodes = () =>
         .AddChild(i)
       )
     );
-
-  var nodes = new[] { root, a, b, c, d, e, f, g, h, i };
-  foreach (var node in nodes)
-  {
-    Console.WriteLine(node);
-  }
+  
+  Console.WriteLine(root);
+  Console.WriteLine(a);
 };
 
 // Run tests
