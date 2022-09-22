@@ -10,10 +10,12 @@
 
   <ItemGroup>
     <Compile Remove="Program-Milestone-2.cs" />
+    <Compile Remove="Program-Milestone-3.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Program-Milestone-2.cs" />
+    <None Include="Program-Milestone-3.cs" />
   </ItemGroup>
 
 </Project>
