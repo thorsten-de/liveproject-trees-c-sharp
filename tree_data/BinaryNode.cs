@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace Tree.Data
 {
-  public class BinaryNode<T>
+  public class BinaryNode<T>: ITreeNode<T>
   {
     /// <summary>
     /// Left subtree
@@ -52,6 +52,22 @@ namespace Tree.Data
     {
       RightNode = rightNode;
       return this;
+    }
+
+
+    public BinaryNode<T> FindNode(T value)
+    {
+      if (value.Equals(Value))
+      {
+        return this;
+      }
+
+      return LeftNode?.FindNode(value) ?? RightNode?.FindNode(value);
+    }
+
+    ITreeNode<T> ITreeNode<T>.FindNode(T value)
+    {
+      return FindNode(value);
     }
 
     public override string ToString() =>
@@ -103,5 +119,6 @@ namespace Tree.Data
         .ToString();
     }
 
+   
   }
 }

@@ -11,7 +11,7 @@ namespace Tree.Data
   /// N-ary tree node class
   /// </summary>
   /// <typeparam name="T">type of value data</typeparam>
-  public class NaryNode<T> 
+  public class NaryNode<T> : ITreeNode<T>
   {
     /// <summary>
     /// Value of this node
@@ -40,6 +40,24 @@ namespace Tree.Data
       return this;
     }
 
+    public ITreeNode<T> FindNode(T value)
+    {
+      if (value.Equals(Value))
+      {
+        return this;
+      }
+
+      foreach (var node in Children)
+      {
+        var result = node.FindNode(value);
+        if (result != null) {
+          return result;
+        }
+      }
+
+      return null;
+    }
+
     public override string ToString() =>
       ToString("");
 
@@ -52,7 +70,6 @@ namespace Tree.Data
         .AppendLine(":")
         .AppendJoin("", Children.Select(n => n.ToString(spaces + "  ")))
         .ToString();
-
 
 
   }
