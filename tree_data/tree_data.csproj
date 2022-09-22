@@ -8,4 +8,12 @@
     <RootNamespace>Tree.Data</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Program-Milestone-2.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Program-Milestone-2.cs" />
+  </ItemGroup>
+
 </Project>
