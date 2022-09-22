@@ -90,8 +90,7 @@ namespace Tree.Data
               .Append(right.ToString(nextLevelSpacing));
           break;
 
-
-        case (null, null):
+        default:
           outlineChildren = (StringBuilder sb) => sb;
           break;
       }
