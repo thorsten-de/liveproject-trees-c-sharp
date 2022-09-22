@@ -23,6 +23,13 @@ namespace Tree.Data
     /// </summary>
     public List<NaryNode<T>> Children { get; private set; }
 
+    IEnumerable<ITreeNode<T>> ITreeNode<T>.Children
+    {
+      get { return Children; }
+    }
+
+
+
     public NaryNode(T value)
     {
       Value = value;
@@ -40,31 +47,13 @@ namespace Tree.Data
       return this;
     }
 
-    public ITreeNode<T> FindNode(T value)
-    {
-      if (value.Equals(Value))
-      {
-        return this;
-      }
-
-      foreach (var node in Children)
-      {
-        var result = node.FindNode(value);
-        if (result != null) {
-          return result;
-        }
-      }
-
-      return null;
-    }
-
     public override string ToString() =>
       ToString("");
 
     /// <summary>
     /// Builds a string outline recoursively
     /// </summary>
-    private string ToString(string spaces) =>
+    protected string ToString(string spaces) =>
       new StringBuilder(spaces)
         .Append(Value)
         .AppendLine(":")

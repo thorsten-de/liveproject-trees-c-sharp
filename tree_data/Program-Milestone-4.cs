@@ -17,6 +17,13 @@ var FindValue = (ITreeNode<string> tree, string value) =>
   }
 };
 
+var DisplayTraversal = (string prefix, IEnumerable<ITreeNode<string>> nodes) =>
+  Console.WriteLine("{0}\t{1}", 
+    prefix, 
+    nodes
+      .Select(n => n.Value)
+      .JoinToString(Separator: " "));
+
 // Test binary nodes as Action to scope var names
 var test_binary_nodes = () =>
 {
@@ -40,12 +47,11 @@ var test_binary_nodes = () =>
 
   Console.WriteLine(root);
 
-  FindValue(root, "Root");
-  FindValue(root, "E");
-  FindValue(root, "F");
-  FindValue(root, "Q");
-  
-  FindValue(b, "F");
+
+  DisplayTraversal("Preorder: ", root.TraversePreorder());
+  DisplayTraversal("Postorder: ", root.TraversePostorder());
+  DisplayTraversal("Inorder: ", root.TraverseInorder());
+  DisplayTraversal("Breadth-First: ", root.TraverseBreathFirst());
 };
 
 // Test N-ary nodes, also wrapped in an Action to scope var names
@@ -81,14 +87,11 @@ var test_nary_nodes = () =>
     );
   
   Console.WriteLine(root);
-  FindValue(root, "Root");
-  FindValue(root, "E");
-  FindValue(root, "F");
-  FindValue(root, "Q");
-
-  FindValue(c, "F");
+  DisplayTraversal("Preorder: ", root.TraversePreorder());
+  DisplayTraversal("Postorder: ", root.TraversePostorder());
+  DisplayTraversal("Breadth-First: ", root.TraverseBreathFirst());
 };
 
 // Run tests
-test_binary_nodes(); 
+test_binary_nodes();
 test_nary_nodes();
