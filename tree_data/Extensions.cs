@@ -5,8 +5,17 @@ namespace Tree.Data
 {
   public static class EnumerableExtensions
   {
-    public static string JoinToString<T>(this IEnumerable<T> enumerable, string seperator = ", ") =>
-      string.Join(seperator, enumerable);
+    public static string JoinToString<T>(this IEnumerable<T> enumerable, string Separator = ", ") =>
+      string.Join(Separator, enumerable);
+
+    public static IEnumerable<T> Each<T>(this IEnumerable<T> enumerable, Action<T> f)
+    {
+      foreach (var item in enumerable)
+      {
+        f(item);
+      }
+      return enumerable;
+    }
   }
 
 

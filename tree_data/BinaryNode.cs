@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace Tree.Data
 {
-  public class BinaryNode<T>: ITreeNode<T>
+  public class BinaryNode<T> : ITreeNode<T>
   {
     /// <summary>
     /// Left subtree
@@ -54,25 +54,28 @@ namespace Tree.Data
       return this;
     }
 
-
-    public BinaryNode<T> FindNode(T value)
+    public IEnumerable<BinaryNode<T>> TraverseInorder()
     {
-      if (value.Equals(Value))
-      {
-        return this;
-      }
-
-      return LeftNode?.FindNode(value) ?? RightNode?.FindNode(value);
+      var result = new List<BinaryNode<T>>();
+      if (LeftNode != null) result.AddRange(LeftNode.TraverseInorder());
+      result.Add(this);
+      if (RightNode != null) result.AddRange(RightNode.TraverseInorder());
+      return result;
     }
 
-    ITreeNode<T> ITreeNode<T>.FindNode(T value)
+
+    // When all not-null branches are needed, behave like a n-ary tree with n=2
+    public IEnumerable<ITreeNode<T>> Children
     {
-      return FindNode(value);
+      get
+      {
+        if (LeftNode != null) yield return LeftNode;
+        if (RightNode != null) yield return RightNode;
+      }
     }
 
     public override string ToString() =>
       ToString("");
-
 
     /// <summary>
     /// Stringifies this node, actually the whole subtree, recoursively
@@ -119,6 +122,6 @@ namespace Tree.Data
         .ToString();
     }
 
-   
+
   }
 }
