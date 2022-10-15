@@ -166,9 +166,15 @@ namespace nary_node5
 
     private void DrawSubtreeLinks(Canvas canvas)
     {
+      double centerY = Center.Y + NODE_RADIUS + Y_SPACING / 2;
+      var corner1 = new Point(Center.X, centerY);
+
       foreach (var node in Children)
       {
-        canvas.DrawLine(Center, node.Center, LINK_BRUSH, LINK_THICKNESS);
+        var corner2 = new Point(node.Center.X, centerY);
+        canvas.DrawLine(Center, corner1, LINK_BRUSH, LINK_THICKNESS);
+        canvas.DrawLine(corner1, corner2, LINK_BRUSH, LINK_THICKNESS);
+        canvas.DrawLine(corner2, node.Center, LINK_BRUSH, LINK_THICKNESS);
         node.DrawSubtreeLinks(canvas);
       }
     }
