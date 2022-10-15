@@ -190,11 +190,11 @@ namespace binary_node5
 
       SubtreeBounds =
         Children
-        .Aggregate(new { childrenLeft = Children.Count() - 1, bounds = new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS) }, (acc, node) =>
+        .Aggregate(new { childrenLeft = Children.Count(), bounds = new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS) }, (acc, node) =>
         {
           node.ArrangeSubtree(childXmin, childYmin);
-          childXmin += LeftChild.SubtreeBounds.Width;
-          if (acc.childrenLeft > 0) childXmin += X_SPACING;
+          childXmin += node.SubtreeBounds.Width;
+          if (acc.childrenLeft > 1) childXmin += X_SPACING;
 
           return new
           {
