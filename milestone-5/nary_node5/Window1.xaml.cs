@@ -18,14 +18,12 @@ namespace nary_node5
 
   static class EnumerableExtensions
   {
-    public static IEnumerable<T> Each<T>(this IEnumerable<T> @this, Action<T> action) =>
-      @this.Aggregate(@this, (acc, item) =>
-      {
-        action(item);
-        return acc;
-      });
+    /// <summary>
+    /// For easier mapping of actions over an array, like List<T>.ForEach
+    /// </summary>
+    public static void ForEach<T>(this T[] @this, Action<T> action) =>
+      Array.ForEach(@this, action);
   }
-
   /// <summary>
   /// Interaction logic for Window1.xaml
   /// </summary>
@@ -53,7 +51,7 @@ namespace nary_node5
         new Node("Basic"),
         new Node("Advanced"),
         new Node("Sci Fi"),
-      }.Each(node_b.AddChild);
+      }.ForEach(node_b.AddChild);
 
       NaryNode<string> node_c = new NaryNode<string>("Sales");
       new[]
@@ -63,7 +61,7 @@ namespace nary_node5
         new Node("B2B"),
         new Node("Consumer"),
         new Node("Account Management")
-      }.Each(node_c.AddChild);
+      }.ForEach(node_c.AddChild);
 
       NaryNode<string> node_d = new NaryNode<string>("Professional Services");
 
@@ -73,20 +71,20 @@ namespace nary_node5
         new Node("Hiring"),
         new Node("Equity"),
         new Node("Discipline"),
-      }.Each(node_i.AddChild);
+      }.ForEach(node_i.AddChild);
       NaryNode<string> node_j = new NaryNode<string>("Accounting");
       new[] {
         new Node("Payroll"),
         new Node("Billing"),
         new Node("Reporting"),
         new Node("Opacity"),
-      }.Each(node_j.AddChild);
+      }.ForEach(node_j.AddChild);
       NaryNode<string> node_k = new NaryNode<string>("Legal");
       new[] {
         new Node("Compliance"),
         new Node("Progress Prevention"),
         new Node("Bial Services"),
-      }.Each(node_k.AddChild);
+      }.ForEach(node_k.AddChild);
 
       node_a.AddChild(node_b);
       node_a.AddChild(node_c);
