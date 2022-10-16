@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xaml;
 
 namespace nary_node5
 {
@@ -121,9 +122,10 @@ namespace nary_node5
       return result;
     }
 
-    public const int NODE_RADIUS = 10;
-    public const int X_SPACING = 20;
-    public const int Y_SPACING = 20;
+    public const double BOX_HALF_WIDTH = 80 / 2;
+    public const double BOX_HALF_HEIGHT = 40 / 2;
+    public const double X_SPACING = 20;
+    public const double Y_SPACING = 20;
     public readonly Brush LINK_BRUSH = Brushes.Green;
     public readonly Brush NODE_STROKE = Brushes.Black;
     public readonly Brush NODE_BG = Brushes.White;
@@ -135,35 +137,59 @@ namespace nary_node5
     public Point Center { get; private set; }
     public Rect SubtreeBounds { get; private set; }
 
-    private Rect NodeBounds(double xmin, double ymin) => new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS);
+    private Rect NodeBounds(Point min) => new Rect(min.X, min.Y, 2 * BOX_HALF_WIDTH, 2 * BOX_HALF_HEIGHT);
+
+
+    public bool IsLeaf
+    {
+      get => !Children.Any();
+    }
+
+    public bool IsTwig
+    {
+      get => !IsLeaf && Children.All(c => c.IsLeaf);
+    }
 
     private void ArrangeSubtree(double xmin, double ymin)
     {
-      double childXmin = xmin;
-      double childYmin = ymin + 2 * NODE_RADIUS + Y_SPACING;
+      Point childMin = new Point(xmin, ymin + 2 * BOX_HALF_HEIGHT + Y_SPACING);
+      if (IsTwig) childMin.Offset(X_SPACING, 0);
 
       SubtreeBounds =
         Children
-        .Aggregate(NodeBounds(xmin, ymin), (bounds, node) =>
+        .Aggregate(NodeBounds(new Point(xmin, ymin)), (bounds, node) =>
         {
-          node.ArrangeSubtree(childXmin, childYmin);
-          childXmin += node.SubtreeBounds.Width + X_SPACING;
+          node.ArrangeSubtree(childMin.X, childMin.Y);
+          if (node.IsLeaf)
+            childMin.Offset(0, node.SubtreeBounds.Height + Y_SPACING);
+          else
+            childMin.Offset(node.SubtreeBounds.Width + X_SPACING, 0);
 
           return Rect.Union(bounds, node.SubtreeBounds);
         });
 
-      Center = new Point(xmin + SubtreeBounds.Width /2, ymin + NODE_RADIUS);
+      Center = new Point(
+        (IsTwig ? -X_SPACING / 2 : 0) + xmin + SubtreeBounds.Width / 2,
+        ymin + BOX_HALF_HEIGHT);
     }
 
     private void DrawSubtreeLinks(Canvas canvas)
     {
-      double centerY = Center.Y + NODE_RADIUS + Y_SPACING / 2;
-      var corner1 = new Point(Center.X, centerY);
+      double halfLinePos = IsTwig
+        ? Center.X - BOX_HALF_WIDTH + X_SPACING / 2
+        : Center.Y + BOX_HALF_HEIGHT + Y_SPACING / 2;
+
+      var corner1 = IsTwig 
+        ? new Point(halfLinePos, Center.Y)
+        : new Point(Center.X, halfLinePos);
 
       foreach (var node in Children)
       {
-        var corner2 = new Point(node.Center.X, centerY);
-        canvas.DrawLine(Center, corner1, LINK_BRUSH, LINK_THICKNESS);
+        var corner2 = IsTwig
+          ? new Point(halfLinePos, node.Center.Y)
+          : new Point(node.Center.X, halfLinePos);
+
+        if (!IsTwig) canvas.DrawLine(Center, corner1, LINK_BRUSH, LINK_THICKNESS);
         canvas.DrawLine(corner1, corner2, LINK_BRUSH, LINK_THICKNESS);
         canvas.DrawLine(corner2, node.Center, LINK_BRUSH, LINK_THICKNESS);
         node.DrawSubtreeLinks(canvas);
@@ -172,12 +198,14 @@ namespace nary_node5
 
     private void DrawSubtreeNodes(Canvas canvas)
     {
-      //canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
+      // canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
 
-      var nodeBounds = NodeBounds(Center.X, Center.Y);
-      nodeBounds.Offset(-NODE_RADIUS, -NODE_RADIUS);
-      canvas.DrawEllipse(nodeBounds, NODE_BG, NODE_STROKE, NODE_THICKNESS);
-      canvas.DrawLabel(nodeBounds, Value, Brushes.Transparent, NODE_FG, HorizontalAlignment.Center, VerticalAlignment.Center, NODE_RADIUS, 0);
+      var nodeBG = IsLeaf ? NODE_BG : Brushes.LightPink;
+
+      var nodeBounds = NodeBounds(Center);
+      nodeBounds.Offset(-BOX_HALF_WIDTH, -BOX_HALF_HEIGHT);
+      canvas.DrawRectangle(nodeBounds, nodeBG, NODE_STROKE, NODE_THICKNESS);
+      canvas.DrawLabel(nodeBounds, Value, Brushes.Transparent, NODE_FG, HorizontalAlignment.Center, VerticalAlignment.Center, 11, 4);
 
       foreach (var node in Children)
       {
