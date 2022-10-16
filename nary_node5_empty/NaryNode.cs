@@ -121,12 +121,11 @@ namespace nary_node5
       return result;
     }
 
-
     public const int NODE_RADIUS = 10;
     public const int X_SPACING = 20;
     public const int Y_SPACING = 20;
-    public readonly Brush LINK_BRUSH = Brushes.Black;
-    public readonly Brush NODE_STROKE = Brushes.Green;
+    public readonly Brush LINK_BRUSH = Brushes.Green;
+    public readonly Brush NODE_STROKE = Brushes.Black;
     public readonly Brush NODE_BG = Brushes.White;
     public readonly Brush NODE_FG = Brushes.Red;
     public readonly Brush SUBTREE_BOUNDS_STROKE = new SolidColorBrush(Color.FromArgb(128, 255, 0, 0));
@@ -136,6 +135,8 @@ namespace nary_node5
     public Point Center { get; private set; }
     public Rect SubtreeBounds { get; private set; }
 
+    private Rect NodeBounds(double xmin, double ymin) => new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS);
+
     private void ArrangeSubtree(double xmin, double ymin)
     {
       double childXmin = xmin;
@@ -143,21 +144,18 @@ namespace nary_node5
 
       SubtreeBounds =
         Children
-        .Aggregate(new { childrenLeft = Children.Count(), bounds = new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS) }, (acc, node) =>
+        .Aggregate(NodeBounds(xmin, ymin), (bounds, node) =>
         {
           node.ArrangeSubtree(childXmin, childYmin);
           childXmin += node.SubtreeBounds.Width + X_SPACING;
 
-          return new
-          {
-            childrenLeft = acc.childrenLeft - 1,
-            bounds = Rect.Union(acc.bounds, node.SubtreeBounds)
-          };
-        }).bounds;
+          return Rect.Union(bounds, node.SubtreeBounds);
+        });
 
-      Center = new Point(xmin + SubtreeBounds.Width / 2, ymin + NODE_RADIUS);
+      double leftNodeX = Children.FirstOrDefault()?.Center.X ?? xmin;
+      double rightNodeX = Children.LastOrDefault()?.Center.X ?? xmin + 2 * NODE_RADIUS;
+      Center = new Point((leftNodeX + rightNodeX) / 2, ymin + NODE_RADIUS);
     }
-
 
     private void DrawSubtreeLinks(Canvas canvas)
     {
@@ -178,7 +176,8 @@ namespace nary_node5
     {
       canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
 
-      var nodeBounds = new Rect(Center.X - NODE_RADIUS, Center.Y - NODE_RADIUS, NODE_RADIUS * 2, NODE_RADIUS * 2);
+      var nodeBounds = NodeBounds(Center.X, Center.Y);
+      nodeBounds.Offset(-NODE_RADIUS, -NODE_RADIUS);
       canvas.DrawEllipse(nodeBounds, NODE_BG, NODE_STROKE, NODE_THICKNESS);
       canvas.DrawLabel(nodeBounds, Value, Brushes.Transparent, NODE_FG, HorizontalAlignment.Center, VerticalAlignment.Center, NODE_RADIUS, 0);
 

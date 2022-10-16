@@ -183,6 +183,8 @@ namespace binary_node5
       }
     }
 
+    private Rect NodeBounds(double xmin, double ymin) => new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS);
+
     private void ArrangeSubtree(double xmin, double ymin)
     {
       double childXmin = xmin;
@@ -190,26 +192,18 @@ namespace binary_node5
 
       SubtreeBounds =
         Children
-        .Aggregate(new { childrenLeft = Children.Count(), bounds = new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS) }, (acc, node) =>
+        .Aggregate(NodeBounds(xmin, ymin), (bounds, node) =>
         {
           node.ArrangeSubtree(childXmin, childYmin);
-          childXmin += node.SubtreeBounds.Width;
-          if (acc.childrenLeft > 1) childXmin += X_SPACING;
+          childXmin += node.SubtreeBounds.Width + X_SPACING;
 
-          return new
-          {
-            childrenLeft = acc.childrenLeft - 1,
-            bounds = new Rect(
-            xmin, ymin,
-              Math.Max(acc.bounds.Right, node.SubtreeBounds.Right) - xmin,
-              Math.Max(acc.bounds.Bottom, node.SubtreeBounds.Bottom) - ymin
-            )
-          };
-        }).bounds;
+          return Rect.Union(bounds, node.SubtreeBounds);
+        });
 
-      Center = new Point(xmin + SubtreeBounds.Width / 2, ymin + NODE_RADIUS);
+      double leftNodeX = Children.FirstOrDefault()?.Center.X ?? xmin;
+      double rightNodeX = Children.LastOrDefault()?.Center.X ?? xmin + 2 * NODE_RADIUS;
+      Center = new Point((leftNodeX + rightNodeX) / 2, ymin + NODE_RADIUS);
     }
-
 
     private void DrawSubtreeLinks(Canvas canvas)
     {
@@ -223,8 +217,9 @@ namespace binary_node5
     private void DrawSubtreeNodes(Canvas canvas)
     {
       canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
-      
-      var nodeBounds = new Rect(Center.X - NODE_RADIUS, Center.Y - NODE_RADIUS, NODE_RADIUS * 2, NODE_RADIUS * 2);
+
+      var nodeBounds = NodeBounds(Center.X, Center.Y);
+      nodeBounds.Offset(-NODE_RADIUS, -NODE_RADIUS);
       canvas.DrawEllipse(nodeBounds, NODE_BG, NODE_STROKE, NODE_THICKNESS);
       canvas.DrawLabel(nodeBounds, Value, Brushes.Transparent, NODE_FG, HorizontalAlignment.Center, VerticalAlignment.Center, NODE_RADIUS, 0);
 
