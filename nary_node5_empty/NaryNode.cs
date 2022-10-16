@@ -146,17 +146,12 @@ namespace nary_node5
         .Aggregate(new { childrenLeft = Children.Count(), bounds = new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS) }, (acc, node) =>
         {
           node.ArrangeSubtree(childXmin, childYmin);
-          childXmin += node.SubtreeBounds.Width;
-          if (acc.childrenLeft > 1) childXmin += X_SPACING;
+          childXmin += node.SubtreeBounds.Width + X_SPACING;
 
           return new
           {
             childrenLeft = acc.childrenLeft - 1,
-            bounds = new Rect(
-            xmin, ymin,
-              Math.Max(acc.bounds.Right, node.SubtreeBounds.Right) - xmin,
-              Math.Max(acc.bounds.Bottom, node.SubtreeBounds.Bottom) - ymin
-            )
+            bounds = Rect.Union(acc.bounds, node.SubtreeBounds)
           };
         }).bounds;
 
