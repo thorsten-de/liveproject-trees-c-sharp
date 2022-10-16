@@ -121,9 +121,10 @@ namespace nary_node5
       return result;
     }
 
-    public const int NODE_RADIUS = 10;
-    public const int X_SPACING = 20;
-    public const int Y_SPACING = 20;
+    public const double BOX_HALF_WIDTH = 80 / 2;
+    public const double BOX_HALF_HEIGHT = 40 / 2;
+    public const double X_SPACING = 20;
+    public const double Y_SPACING = 20;
     public readonly Brush LINK_BRUSH = Brushes.Green;
     public readonly Brush NODE_STROKE = Brushes.Black;
     public readonly Brush NODE_BG = Brushes.White;
@@ -135,12 +136,12 @@ namespace nary_node5
     public Point Center { get; private set; }
     public Rect SubtreeBounds { get; private set; }
 
-    private Rect NodeBounds(double xmin, double ymin) => new Rect(xmin, ymin, 2 * NODE_RADIUS, 2 * NODE_RADIUS);
+    private Rect NodeBounds(double xmin, double ymin) => new Rect(xmin, ymin, 2 * BOX_HALF_WIDTH, 2 * BOX_HALF_HEIGHT);
 
     private void ArrangeSubtree(double xmin, double ymin)
     {
       double childXmin = xmin;
-      double childYmin = ymin + 2 * NODE_RADIUS + Y_SPACING;
+      double childYmin = ymin + 2 * BOX_HALF_HEIGHT + Y_SPACING;
 
       SubtreeBounds =
         Children
@@ -152,12 +153,12 @@ namespace nary_node5
           return Rect.Union(bounds, node.SubtreeBounds);
         });
 
-      Center = new Point(xmin + SubtreeBounds.Width /2, ymin + NODE_RADIUS);
+      Center = new Point(xmin + SubtreeBounds.Width /2, ymin + BOX_HALF_HEIGHT);
     }
 
     private void DrawSubtreeLinks(Canvas canvas)
     {
-      double centerY = Center.Y + NODE_RADIUS + Y_SPACING / 2;
+      double centerY = Center.Y + BOX_HALF_HEIGHT + Y_SPACING / 2;
       var corner1 = new Point(Center.X, centerY);
 
       foreach (var node in Children)
@@ -175,9 +176,9 @@ namespace nary_node5
       //canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
 
       var nodeBounds = NodeBounds(Center.X, Center.Y);
-      nodeBounds.Offset(-NODE_RADIUS, -NODE_RADIUS);
-      canvas.DrawEllipse(nodeBounds, NODE_BG, NODE_STROKE, NODE_THICKNESS);
-      canvas.DrawLabel(nodeBounds, Value, Brushes.Transparent, NODE_FG, HorizontalAlignment.Center, VerticalAlignment.Center, NODE_RADIUS, 0);
+      nodeBounds.Offset(-BOX_HALF_WIDTH, -BOX_HALF_HEIGHT);
+      canvas.DrawRectangle(nodeBounds, NODE_BG, NODE_STROKE, NODE_THICKNESS);
+      canvas.DrawLabel(nodeBounds, Value, Brushes.Transparent, NODE_FG, HorizontalAlignment.Center, VerticalAlignment.Center, 11, 4);
 
       foreach (var node in Children)
       {
