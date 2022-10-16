@@ -172,7 +172,7 @@ namespace nary_node5
 
     private void DrawSubtreeNodes(Canvas canvas)
     {
-      canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
+      //canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
 
       var nodeBounds = NodeBounds(Center.X, Center.Y);
       nodeBounds.Offset(-NODE_RADIUS, -NODE_RADIUS);
