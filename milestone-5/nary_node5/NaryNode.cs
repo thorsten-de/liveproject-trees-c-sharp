@@ -138,6 +138,17 @@ namespace nary_node5
 
     private Rect NodeBounds(double xmin, double ymin) => new Rect(xmin, ymin, 2 * BOX_HALF_WIDTH, 2 * BOX_HALF_HEIGHT);
 
+
+    public bool IsLeaf
+    {
+      get => !Children.Any();
+    }
+
+    public bool IsTwig
+    {
+      get => Children.All(c => c.IsLeaf);
+    }
+
     private void ArrangeSubtree(double xmin, double ymin)
     {
       double childXmin = xmin;
@@ -175,9 +186,11 @@ namespace nary_node5
     {
       //canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
 
+      var nodeBG = IsLeaf ? NODE_BG : Brushes.LightPink;
+
       var nodeBounds = NodeBounds(Center.X, Center.Y);
       nodeBounds.Offset(-BOX_HALF_WIDTH, -BOX_HALF_HEIGHT);
-      canvas.DrawRectangle(nodeBounds, NODE_BG, NODE_STROKE, NODE_THICKNESS);
+      canvas.DrawRectangle(nodeBounds, nodeBG, NODE_STROKE, NODE_THICKNESS);
       canvas.DrawLabel(nodeBounds, Value, Brushes.Transparent, NODE_FG, HorizontalAlignment.Center, VerticalAlignment.Center, 11, 4);
 
       foreach (var node in Children)
