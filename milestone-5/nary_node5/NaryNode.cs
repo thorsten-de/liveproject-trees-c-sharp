@@ -136,7 +136,7 @@ namespace nary_node5
     public Point Center { get; private set; }
     public Rect SubtreeBounds { get; private set; }
 
-    private Rect NodeBounds(double xmin, double ymin) => new Rect(xmin, ymin, 2 * BOX_HALF_WIDTH, 2 * BOX_HALF_HEIGHT);
+    private Rect NodeBounds(Point min) => new Rect(min.X, min.Y, 2 * BOX_HALF_WIDTH, 2 * BOX_HALF_HEIGHT);
 
 
     public bool IsLeaf
@@ -151,15 +151,20 @@ namespace nary_node5
 
     private void ArrangeSubtree(double xmin, double ymin)
     {
-      double childXmin = xmin;
-      double childYmin = ymin + 2 * BOX_HALF_HEIGHT + Y_SPACING;
+      Point childMin = new Point(xmin, ymin + 2 * BOX_HALF_HEIGHT + Y_SPACING);
+      if (IsTwig) childMin.Offset(2 * X_SPACING, 0);
 
-      SubtreeBounds =
+      SubtreeBounds = 
         Children
-        .Aggregate(NodeBounds(xmin, ymin), (bounds, node) =>
+        .Aggregate(NodeBounds(childMin), (bounds, node) =>
         {
-          node.ArrangeSubtree(childXmin, childYmin);
-          childXmin += node.SubtreeBounds.Width + X_SPACING;
+          node.ArrangeSubtree(childMin.X, childMin.Y);
+          if (IsTwig) {
+            childMin.Offset(0, node.SubtreeBounds.Height + Y_SPACING);
+          }
+          else {
+            childMin.Offset(node.SubtreeBounds.Width + X_SPACING, 0);
+          }
 
           return Rect.Union(bounds, node.SubtreeBounds);
         });
@@ -188,7 +193,7 @@ namespace nary_node5
 
       var nodeBG = IsLeaf ? NODE_BG : Brushes.LightPink;
 
-      var nodeBounds = NodeBounds(Center.X, Center.Y);
+      var nodeBounds = NodeBounds(Center);
       nodeBounds.Offset(-BOX_HALF_WIDTH, -BOX_HALF_HEIGHT);
       canvas.DrawRectangle(nodeBounds, nodeBG, NODE_STROKE, NODE_THICKNESS);
       canvas.DrawLabel(nodeBounds, Value, Brushes.Transparent, NODE_FG, HorizontalAlignment.Center, VerticalAlignment.Center, 11, 4);
