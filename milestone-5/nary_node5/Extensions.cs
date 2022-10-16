@@ -8,6 +8,7 @@ namespace nary_node5
   public static class Extensions
   {
 
+
     #region Add Shapes to a Canvas
 
     // Add a Line to a Canvas.
