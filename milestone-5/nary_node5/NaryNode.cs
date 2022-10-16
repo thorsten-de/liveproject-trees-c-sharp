@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xaml;
 
 namespace nary_node5
 {
@@ -146,41 +147,49 @@ namespace nary_node5
 
     public bool IsTwig
     {
-      get => Children.All(c => c.IsLeaf);
+      get => !IsLeaf && Children.All(c => c.IsLeaf);
     }
 
     private void ArrangeSubtree(double xmin, double ymin)
     {
       Point childMin = new Point(xmin, ymin + 2 * BOX_HALF_HEIGHT + Y_SPACING);
-      if (IsTwig) childMin.Offset(2 * X_SPACING, 0);
+      if (IsTwig) childMin.Offset(X_SPACING, 0);
 
-      SubtreeBounds = 
+      SubtreeBounds =
         Children
-        .Aggregate(NodeBounds(childMin), (bounds, node) =>
+        .Aggregate(NodeBounds(new Point(xmin, ymin)), (bounds, node) =>
         {
           node.ArrangeSubtree(childMin.X, childMin.Y);
-          if (IsTwig) {
+          if (node.IsLeaf)
             childMin.Offset(0, node.SubtreeBounds.Height + Y_SPACING);
-          }
-          else {
+          else
             childMin.Offset(node.SubtreeBounds.Width + X_SPACING, 0);
-          }
 
           return Rect.Union(bounds, node.SubtreeBounds);
         });
 
-      Center = new Point(xmin + SubtreeBounds.Width /2, ymin + BOX_HALF_HEIGHT);
+      Center = new Point(
+        (IsTwig ? -X_SPACING / 2 : 0) + xmin + SubtreeBounds.Width / 2,
+        ymin + BOX_HALF_HEIGHT);
     }
 
     private void DrawSubtreeLinks(Canvas canvas)
     {
-      double centerY = Center.Y + BOX_HALF_HEIGHT + Y_SPACING / 2;
-      var corner1 = new Point(Center.X, centerY);
+      double halfLinePos = IsTwig
+        ? Center.X - BOX_HALF_WIDTH + X_SPACING / 2
+        : Center.Y + BOX_HALF_HEIGHT + Y_SPACING / 2;
+
+      var corner1 = IsTwig 
+        ? new Point(halfLinePos, Center.Y)
+        : new Point(Center.X, halfLinePos);
 
       foreach (var node in Children)
       {
-        var corner2 = new Point(node.Center.X, centerY);
-        canvas.DrawLine(Center, corner1, LINK_BRUSH, LINK_THICKNESS);
+        var corner2 = IsTwig
+          ? new Point(halfLinePos, node.Center.Y)
+          : new Point(node.Center.X, halfLinePos);
+
+        if (!IsTwig) canvas.DrawLine(Center, corner1, LINK_BRUSH, LINK_THICKNESS);
         canvas.DrawLine(corner1, corner2, LINK_BRUSH, LINK_THICKNESS);
         canvas.DrawLine(corner2, node.Center, LINK_BRUSH, LINK_THICKNESS);
         node.DrawSubtreeLinks(canvas);
@@ -189,7 +198,7 @@ namespace nary_node5
 
     private void DrawSubtreeNodes(Canvas canvas)
     {
-      //canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
+      // canvas.DrawRectangle(SubtreeBounds, Brushes.Transparent, SUBTREE_BOUNDS_STROKE, 1); // Show calculated bounds
 
       var nodeBG = IsLeaf ? NODE_BG : Brushes.LightPink;
 
