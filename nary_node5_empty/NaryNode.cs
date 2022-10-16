@@ -152,9 +152,7 @@ namespace nary_node5
           return Rect.Union(bounds, node.SubtreeBounds);
         });
 
-      double leftNodeX = Children.FirstOrDefault()?.Center.X ?? xmin;
-      double rightNodeX = Children.LastOrDefault()?.Center.X ?? xmin + 2 * NODE_RADIUS;
-      Center = new Point((leftNodeX + rightNodeX) / 2, ymin + NODE_RADIUS);
+      Center = new Point(xmin + SubtreeBounds.Width /2, ymin + NODE_RADIUS);
     }
 
     private void DrawSubtreeLinks(Canvas canvas)
