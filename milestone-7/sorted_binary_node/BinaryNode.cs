@@ -10,10 +10,10 @@ using System.Windows.Media;
 
 namespace sorted_binary_node1
 {
-    internal class BinaryNode<T>
+    internal class SortedBinaryNode<T> where T: IComparable<T>
     {
         internal T Value { get; set; }
-        internal BinaryNode<T> LeftChild, RightChild;
+        internal SortedBinaryNode<T> LeftChild, RightChild;
 
         // Size and position values.
         private const double NODE_RADIUS = 10;  // Radius of a node’s circle
@@ -22,19 +22,19 @@ namespace sorted_binary_node1
         internal Point Center { get; private set; }
         internal Rect SubtreeBounds { get; private set; }
 
-        internal BinaryNode(T value)
+        internal SortedBinaryNode(T value)
         {
             Value = value;
             LeftChild = null;
             RightChild = null;
         }
 
-        internal void AddLeft(BinaryNode<T> child)
+        internal void AddLeft(SortedBinaryNode<T> child)
         {
             LeftChild = child;
         }
 
-        internal void AddRight(BinaryNode<T> child)
+        internal void AddRight(SortedBinaryNode<T> child)
         {
             RightChild = child;
         }
@@ -75,13 +75,13 @@ namespace sorted_binary_node1
 
         // Recursively search this node's subtree looking for the target value.
         // Return the node that contains the value or null.
-        internal BinaryNode<T> FindNode(T target)
+        internal SortedBinaryNode<T> FindNode(T target)
         {
             // See if this node contains the value.
             if (Value.Equals(target)) return this;
 
             // Search the left child subtree.
-            BinaryNode<T> result = null;
+            SortedBinaryNode<T> result = null;
             if (LeftChild != null)
                 result = LeftChild.FindNode(target);
             if (result != null) return result;
@@ -95,9 +95,9 @@ namespace sorted_binary_node1
             return null;
         }
 
-        internal List<BinaryNode<T>> TraversePreorder()
+        internal List<SortedBinaryNode<T>> TraversePreorder()
         {
-            List<BinaryNode<T>> result = new List<BinaryNode<T>>();
+            List<SortedBinaryNode<T>> result = new List<SortedBinaryNode<T>>();
 
             // Add this node to the traversal.
             result.Add(this);
@@ -108,9 +108,9 @@ namespace sorted_binary_node1
             return result;
         }
 
-        internal List<BinaryNode<T>> TraverseInorder()
+        internal List<SortedBinaryNode<T>> TraverseInorder()
         {
-            List<BinaryNode<T>> result = new List<BinaryNode<T>>();
+            List<SortedBinaryNode<T>> result = new List<SortedBinaryNode<T>>();
 
             // Add the left subtree.
             if (LeftChild != null) result.AddRange(LeftChild.TraverseInorder());
@@ -123,9 +123,9 @@ namespace sorted_binary_node1
             return result;
         }
 
-        internal List<BinaryNode<T>> TraversePostorder()
+        internal List<SortedBinaryNode<T>> TraversePostorder()
         {
-            List<BinaryNode<T>> result = new List<BinaryNode<T>>();
+            List<SortedBinaryNode<T>> result = new List<SortedBinaryNode<T>>();
 
             // Add the child subtrees.
             if (LeftChild != null) result.AddRange(LeftChild.TraversePostorder());
@@ -136,10 +136,10 @@ namespace sorted_binary_node1
             return result;
         }
 
-        internal List<BinaryNode<T>> TraverseBreadthFirst()
+        internal List<SortedBinaryNode<T>> TraverseBreadthFirst()
         {
-            List<BinaryNode<T>> result = new List<BinaryNode<T>>();
-            Queue<BinaryNode<T>> queue = new Queue<BinaryNode<T>>();
+            List<SortedBinaryNode<T>> result = new List<SortedBinaryNode<T>>();
+            Queue<SortedBinaryNode<T>> queue = new Queue<SortedBinaryNode<T>>();
 
             // Start with the top node in the queue.
             queue.Enqueue(this);
@@ -147,7 +147,7 @@ namespace sorted_binary_node1
             {
                 // Remove the top node from the queue and
                 // add it to the result list.
-                BinaryNode<T> node = queue.Dequeue();
+                SortedBinaryNode<T> node = queue.Dequeue();
                 result.Add(node);
 
                 // Add the node's children to the queue.
