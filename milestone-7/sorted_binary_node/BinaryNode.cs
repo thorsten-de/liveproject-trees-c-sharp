@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.ComponentModel;
+using System.Net.Security;
 
 namespace sorted_binary_node1
 {
@@ -71,28 +73,6 @@ namespace sorted_binary_node1
           result += RightChild.ToString(spaces + "  ");
       }
       return result;
-    }
-
-    // Recursively search this node's subtree looking for the target value.
-    // Return the node that contains the value or null.
-    internal SortedBinaryNode<T> FindNode(T target)
-    {
-      // See if this node contains the value.
-      if (Value.Equals(target)) return this;
-
-      // Search the left child subtree.
-      SortedBinaryNode<T> result = null;
-      if (LeftChild != null)
-        result = LeftChild.FindNode(target);
-      if (result != null) return result;
-
-      // Search the right child subtree.
-      if (RightChild != null)
-        result = RightChild.FindNode(target);
-      if (result != null) return result;
-
-      // We did not find the value. Return null.
-      return null;
     }
 
     internal List<SortedBinaryNode<T>> TraversePreorder()
@@ -314,6 +294,79 @@ namespace sorted_binary_node1
           }
           break;
       }
+    }
+
+    public SortedBinaryNode<T> FindNode(T value)
+    {
+      switch (value.CompareTo(this.Value))
+      {
+        case 0:
+          return this;
+        case -1:
+          return LeftChild?.FindNode(value);
+        case 1:
+          return RightChild?.FindNode(value);
+      }
+
+      return null;
+    }
+
+    public void RemoveNode(T value)
+    {
+      var node = this;
+      SortedBinaryNode<T> parent = null;
+      bool found = false;
+      do
+      {
+        switch (value.CompareTo(node.Value))
+        {
+          case 0:
+            found = true; break;
+          case -1:
+            parent = node;
+            node = node.LeftChild;
+            break;
+          case 1:
+            parent = node;
+            node = node.RightChild;
+            break;
+        }
+
+      } while (!found && node != null);
+      if (node == null) throw new ArgumentException("Value not in tree.");
+
+      var x = node;
+
+      if (node.LeftChild == null) {
+        x = x.RightChild;
+      } else if (node.RightChild == null) {
+        x = x.LeftChild;
+      }
+      else if (node.LeftChild.RightChild == null)
+      {
+        x = x.LeftChild;
+        x.RightChild = node.RightChild;
+      }
+      else
+      {
+        var c = x.LeftChild;
+        while (c.RightChild.RightChild != null)
+        {
+          c = c.RightChild;
+        }
+        x = c.RightChild;
+        c.RightChild = x.LeftChild;
+        x.RightChild = node.RightChild;
+        x.LeftChild = node.LeftChild;
+      }
+
+      if (node.Value.CompareTo(parent.Value) < 0) {
+        parent.LeftChild = x;
+      } else
+      {
+        parent.RightChild = x;
+      }
+
     }
   }
 }

@@ -42,16 +42,18 @@ namespace sorted_binary_node1
     {
       Tree.AddNode(int.Parse(ValueTextBox.Text));
       DrawTree();
-
     }
 
     private void findButton_Click(object sender, RoutedEventArgs e)
     {
-
+      var node = Tree.FindNode(int.Parse(ValueTextBox.Text));
+      MessageBox.Show(node?.Value.ToString() ?? "Value not found.");
     }
 
     private void removeButton_Click(object sender, RoutedEventArgs e)
     {
+      Tree.RemoveNode(int.Parse(ValueTextBox.Text));
+      DrawTree();
 
     }
 
@@ -66,6 +68,13 @@ namespace sorted_binary_node1
       var values = new[] { 60, 35, 76, 21, 42, 71, 89, 17, 24, 74, 11, 23, 72, 75 };
       Array.ForEach(values, Tree.AddNode);
       DrawTree();
+
+      foreach (var value in values)
+      {
+        Debug.Assert(value == Tree.FindNode(value)?.Value);
+      }
+      Debug.Assert(Tree.FindNode(12) == null);
+
 
     }
 

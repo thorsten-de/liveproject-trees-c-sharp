@@ -21,7 +21,7 @@
                 HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
             <Button Name="addButton" Content="Add" Click="addButton_Click" IsDefault="True"/>
             <Button Name="removeButton" Content="Remove" Click="removeButton_Click"
-                IsEnabled="False" IsCancel="True" />
+                IsEnabled="True" IsCancel="True" />
             <Button Name="findButton" Content="Find" Click="findButton_Click"/>
 
             <Button Name="resetButton" Content="Reset" Click="resetButton_Click" Margin="20,3,3,3"/>
