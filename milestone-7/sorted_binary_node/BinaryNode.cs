@@ -311,6 +311,12 @@ namespace sorted_binary_node1
       return null;
     }
 
+    // Roughly based on treedelete in "Algorithms" by R. Sedgewick et at.
+    // Required adjustments to adhere project description:
+    // - Find the node for the given value first, while keeping track of its parent
+    // - LeftChild swapped with RightChild, to replace the node with the largest value oft the left subtree instead of the smallest value in the right subtree.
+    // - Added a case to handle both RightChild and LeftChild symmetrically. The textbook doesn't do so. Cormen's Algorithm textbook does, but uses a different
+    // approach to model nodes by adding a parent link. So its a bit of mix-and-match here.
     public void RemoveNode(T value)
     {
       var node = this;
@@ -335,31 +341,45 @@ namespace sorted_binary_node1
       } while (!found && node != null);
       if (node == null) throw new ArgumentException("Value not in tree.");
 
-      var x = node;
+      var x = node; // x will be the replacement of node in the parent
 
+      // No LeftChild or Leaf: use Right child. In case of node being a Leaf, x=x.RightChild is null.
       if (node.LeftChild == null) {
         x = x.RightChild;
+
+      // Symmetric: No Rightchild. LeftChild is not null here.
       } else if (node.RightChild == null) {
         x = x.LeftChild;
       }
+      
+      // Two children, but the LeftChild itself represents the maximum of the left subtree:
+      // Replace node with LeftChild combined with node's RightChild
       else if (node.LeftChild.RightChild == null)
       {
         x = x.LeftChild;
         x.RightChild = node.RightChild;
       }
+      // Two children, but maximum is in the "rightmost" corner of the left subtree. 
+      // Find that max_node and replace node (x) with max_node. If max_node has a left 
+      // subtree, all its values are greater than parent.Value and less than
+      // max_node.Value, so it can replace max_node as RightChild of its parent.
       else
       {
-        var c = x.LeftChild;
-        while (c.RightChild.RightChild != null)
+        // first, find max_node, or rather its parent, in left subtree
+        var max_node_parent = x.LeftChild;
+        while (max_node_parent.RightChild.RightChild != null)
         {
-          c = c.RightChild;
+          max_node_parent = max_node_parent.RightChild;
         }
-        x = c.RightChild;
-        c.RightChild = x.LeftChild;
-        x.RightChild = node.RightChild;
+        x = max_node_parent.RightChild; // the max_node that will replace node
+        max_node_parent.RightChild = x.LeftChild; // put max_node's left subtree to the RightChild of its parent
+
+        // put node's original child nodes as children of max_node
+        x.RightChild = node.RightChild; 
         x.LeftChild = node.LeftChild;
       }
 
+      // replace node with x in the right child of the parent
       if (node.Value.CompareTo(parent.Value) < 0) {
         parent.LeftChild = x;
       } else

@@ -17,7 +17,7 @@ using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace sorted_binary_node1
 {
-    using Node = SortedBinaryNode<int>;
+  using Node = SortedBinaryNode<int>;
 
   /// <summary>
   /// Interaction logic for Window1.xaml
