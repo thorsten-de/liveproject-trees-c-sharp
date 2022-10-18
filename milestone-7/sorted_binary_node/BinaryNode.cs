@@ -314,9 +314,11 @@ namespace sorted_binary_node1
     // Roughly based on treedelete in "Algorithms" by R. Sedgewick et at.
     // Required adjustments to adhere project description:
     // - Find the node for the given value first, while keeping track of its parent
-    // - LeftChild swapped with RightChild, to replace the node with the largest value oft the left subtree instead of the smallest value in the right subtree.
-    // - Added a case to handle both RightChild and LeftChild symmetrically. The textbook doesn't do so. Cormen's Algorithm textbook does, but uses a different
-    // approach to model nodes by adding a parent link. So its a bit of mix-and-match here.
+    // - LeftChild swapped with RightChild, to replace the node with the largest value
+    //   in the left subtree instead of the smallest value in the right subtree.
+    // - Added a case to handle both RightChild and LeftChild symmetrically. The textbook
+    //   doesn't do so. Cormen's Algorithm textbook does, but uses a different approach
+    //   to model nodes by adding a parent link. So it is a bit of mix-and-match here.
     public void RemoveNode(T value)
     {
       var node = this;
